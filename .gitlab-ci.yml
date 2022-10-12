@@ -1,0 +1,31 @@
+image: maven:3.6.3-jdk-8
+
+stages:
+  - test
+  - report
+
+ApiTests:
+  stage: test
+  when: always
+  script:
+    - mvn clean verify
+  allow_failure: true
+  artifacts:
+    when: always
+    paths:
+      - target/site/serenity/*
+    expire_in: 1 day
+
+Report:
+  stage: report
+  when: always
+  needs:
+    - job: ApiTests
+  dependencies:
+    - ApiTests
+  allow_failure: false
+  artifacts:
+    when: always
+    paths:
+      - target/site/serenity/*
+    expire_in: 1 day
